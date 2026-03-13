@@ -6,6 +6,7 @@
     import org.springframework.stereotype.Service;
 
     import java.util.List;
+    import java.util.Map;
 
     @Service
     public class StudentService {
@@ -34,5 +35,22 @@
             Student updatedStudent = studentRepository.save(matchedStudent);
 
             return updatedStudent;
+        }
+
+        public Student updatePartialStudent(Long id, Map<String,Object> updates) {
+            Student matchedStudent = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+            for (String param : updates.keySet()) {
+                switch (param) {
+                    case "name":
+                        matchedStudent.setName((String) updates.get(param));
+                        break;
+
+                    case "email":
+                        matchedStudent.setEmail((String) updates.get(param));
+                        break;
+                }
+            }
+            studentRepository.save(matchedStudent);
+            return matchedStudent;
         }
     }
